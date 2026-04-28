@@ -36,33 +36,43 @@ const Agent = ({
   const [lastMessage, setLastMessage] = useState<string>("");
 
   useEffect(() => {
+    console.log("Agent mounted", {
+      userName,
+      userId,
+      interviewId,
+      type,
+      questions,
+    });
     const onCallStart = () => {
+      console.log("Vapi call started", { interviewId, userId });
       setCallStatus(CallStatus.ACTIVE);
     };
 
     const onCallEnd = () => {
+      console.log("Vapi call ended", { interviewId, userId });
       setCallStatus(CallStatus.FINISHED);
     };
 
     const onMessage = (message: Message) => {
       if (message.type === "transcript" && message.transcriptType === "final") {
         const newMessage = { role: message.role, content: message.transcript };
+        console.log("Transcript message received", newMessage);
         setMessages((prev) => [...prev, newMessage]);
       }
     };
 
     const onSpeechStart = () => {
-      console.log("speech start");
+      console.log("Speech start");
       setIsSpeaking(true);
     };
 
     const onSpeechEnd = () => {
-      console.log("speech end");
+      console.log("Speech end");
       setIsSpeaking(false);
     };
 
     const onError = (error: Error) => {
-      console.log("Error:", error);
+      console.log("Vapi error", { error });
     };
 
     vapi.on("call-start", onCallStart);
@@ -83,24 +93,34 @@ const Agent = ({
   }, []);
 
   useEffect(() => {
+    console.log("Agent state update", {
+      messages,
+      callStatus,
+      feedbackId,
+      interviewId,
+      type,
+      userId,
+    });
     if (messages.length > 0) {
       setLastMessage(messages[messages.length - 1].content);
     }
 
     const handleGenerateFeedback = async (messages: SavedMessage[]) => {
-      console.log("handleGenerateFeedback");
-
+      console.log("Generating feedback", { interviewId, userId, messages });
       const { success, feedbackId: id } = await createFeedback({
         interviewId: interviewId!,
         userId: userId!,
         transcript: messages,
         feedbackId,
       });
-
       if (success && id) {
+        console.log("Feedback generated and redirecting", {
+          interviewId,
+          feedbackId: id,
+        });
         router.push(`/interview/${interviewId}/feedback`);
       } else {
-        console.log("Error saving feedback");
+        console.log("Error saving feedback, redirecting home", { interviewId });
         router.push("/");
       }
     };
@@ -115,8 +135,14 @@ const Agent = ({
   }, [messages, callStatus, feedbackId, interviewId, router, type, userId]);
 
   const handleCall = async () => {
+    console.log("Call initiated", {
+      type,
+      userName,
+      userId,
+      interviewId,
+      questions,
+    });
     setCallStatus(CallStatus.CONNECTING);
-
     if (type === "generate") {
       await vapi.start(process.env.NEXT_PUBLIC_VAPI_WORKFLOW_ID!, {
         variableValues: {
@@ -131,7 +157,7 @@ const Agent = ({
           .map((question) => `- ${question}`)
           .join("\n");
       }
-
+      console.log("Starting Vapi interview", { formattedQuestions });
       await vapi.start(interviewer, {
         variableValues: {
           questions: formattedQuestions,
@@ -141,6 +167,7 @@ const Agent = ({
   };
 
   const handleDisconnect = () => {
+    console.log("Manual disconnect called", { interviewId, userId });
     setCallStatus(CallStatus.FINISHED);
     vapi.stop();
   };

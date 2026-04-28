@@ -1,5 +1,6 @@
-"use server";
 
+"use server";
+import { logEvent } from "@/lib/logger";
 import { generateObject } from "ai";
 // import { google } from "@ai-sdk/google";
 
@@ -24,6 +25,7 @@ export async function createFeedback(params: CreateFeedbackParams) {
       )
       .join("");
 
+    logEvent("Calling LLM for feedback generation", { interviewId, userId, transcript });
     const { object } = await generateObject({
       model: openrouter.chat("openai/gpt-4o-mini"),
       schema: feedbackSchema,
@@ -43,6 +45,7 @@ export async function createFeedback(params: CreateFeedbackParams) {
         "You are a professional interviewer analyzing a mock interview. Your task is to evaluate the candidate based on structured categories",
     });
 
+    logEvent("Feedback object received", { interviewId, userId, object });
     const feedback = {
       interviewId: interviewId,
       userId: userId,
@@ -62,11 +65,13 @@ export async function createFeedback(params: CreateFeedbackParams) {
       feedbackRef = db.collection("feedback").doc();
     }
 
+    logEvent("Saving feedback to Firestore", { interviewId, userId, feedback });
     await feedbackRef.set(feedback);
 
+    logEvent("Feedback saved successfully", { interviewId, userId, feedbackId: feedbackRef.id });
     return { success: true, feedbackId: feedbackRef.id };
   } catch (error) {
-    console.error("Error saving feedback:", error);
+    logEvent("Error saving feedback", { error });
     return { success: false };
   }
 }
