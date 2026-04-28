@@ -4,12 +4,21 @@ import { google } from "@ai-sdk/google";
 import { db } from "@/firebase/admin";
 import { getRandomInterviewCover } from "@/lib/utils";
 
+import { createOpenAI } from "@ai-sdk/openai";
+
+const openrouter = createOpenAI({
+  baseURL: "https://openrouter.ai/api/v1",
+  apiKey: process.env.OPENROUTER_API_KEY,
+});
+
+
+
 export async function POST(request: Request) {
   const { type, role, level, techstack, amount, userid } = await request.json();
 
   try {
     const { text: questions } = await generateText({
-      model: google("gemini-2.0-flash-001"),
+      model: openrouter.chat("openai/gpt-4o-mini"),
       prompt: `Prepare questions for a job interview.
         The job role is ${role}.
         The job experience level is ${level}.
