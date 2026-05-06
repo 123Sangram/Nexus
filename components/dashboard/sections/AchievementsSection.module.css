@@ -2,23 +2,21 @@
    ACHIEVEMENTS PAGE STYLES
    ========================= */
 
-   :global(:root)  {
+  /* ===== PAGE ===== */
+  .achievement-page {
     --bg-main: #020617;
     --bg-card: #0f172a;
     --border: rgba(255, 255, 255, 0.06);
-  
+
     --text-primary: #e2e8f0;
     --text-secondary: #94a3b8;
-  
+
     --purple: #8b5cf6;
     --blue: #3b82f6;
     --green: #22c55e;
     --orange: #fb923c;
     --gold: #facc15;
-  }
-  
-  /* ===== PAGE ===== */
-  .achievement-page {
+
     background: radial-gradient(circle at top, #0b1220, #020617);
     min-height: 100vh;
     padding: 24px;
