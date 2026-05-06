@@ -7,6 +7,81 @@
   If you rely on `tailwindcss-animate`, add it to `tailwind.config.js` plugins.
 */
 @import "tailwindcss";
+
+
+
+
+/* ───────── RESET ───────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* ───────── FULL PAGE LOCK ───────── */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+
+  /* 🔥 MAIN: Disable BOTH scrolls */
+  overflow: hidden;
+}
+
+/* ───────── PREVENT OVERFLOW BUGS ───────── */
+
+/* images/videos overflow na kare */
+img, video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* text break ho jaye */
+p, h1, h2, h3, h4, h5, h6, span {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+/* all containers safe width */
+div, section {
+  max-width: 100%;
+}
+
+/* ❌ Avoid this (scroll create karta hai) */
+/* width: 100vw; */
+
+/* ✅ Always use this */
+.fullWidth {
+  width: 100%;
+}
+
+/* ───────── OPTIONAL: INNER SCROLL (IMPORTANT) ───────── */
+/* Agar tum content scroll karna chahte ho kisi section me */
+
+.mainContent {
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* scrollbar hidden but scroll working */
+.mainContent::-webkit-scrollbar {
+  display: none;
+}
+.mainContent {
+  scrollbar-width: none;
+}
+
+/* ───────── BACKGROUND GLOW FIX ───────── */
+/* tumhare gradient/glow elements overflow na kare */
+
+.page::before,
+.page::after {
+  max-width: 100%;
+  pointer-events: none;
+}
 /* Restore a small set of CSS variables used across components */
 :root {
   --color-success-100: #49de50;
