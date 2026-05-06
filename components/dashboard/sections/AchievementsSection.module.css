@@ -2,7 +2,7 @@
    ACHIEVEMENTS PAGE STYLES
    ========================= */
 
-   :root {
+   :global(:root)  {
     --bg-main: #020617;
     --bg-card: #0f172a;
     --border: rgba(255, 255, 255, 0.06);
